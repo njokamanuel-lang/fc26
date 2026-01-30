@@ -1,0 +1,192 @@
+<!DOCTYPE html
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Random Team Picker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+    }
+    button {
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    button:hover {
+      background: #1e40af;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 8px;
+      background: #e5e7eb;
+      margin: 5px 0;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Random Team Picker</h1>
+
+    <h2>Add Teams</h2>
+    <input type="text" id="teamInput" placeholder="Enter team name" />
+    <button onclick="addTeam()">Add Team</button>
+
+    <ul id="teamList"></ul>
+
+    <h2>Add Players</h2>
+    <input type="text" id="playerInput" placeholder="Enter player name" />
+    <button onclick="addPlayer()">Add Player</button>
+
+    <ul id="playerList"></ul>
+
+    <button onclick="assignTeams()">Randomly Assign Teams</button>
+
+    <h2>Assignments</h2>
+    <ul id="assignmentList"></ul>
+
+    <button onclick="pairMatches()">Generate Match Pairings</button>
+
+    <h2>Matches</h2>
+    <ul id="matchList"></ul>
+  </div>
+
+  <script>
+    let teams = [
+      "Arsenal",
+      "Aston Villa",
+      "Bournemouth",
+      "Brentford",
+      "Brighton & Hove Albion",
+      "Chelsea",
+      "Crystal Palace",
+      "Everton",
+      "Fulham",
+      "Ipswich Town",
+      "Leicester City",
+      "Liverpool",
+      "Manchester City",
+      "Manchester United",
+      "Newcastle United",
+      "Nottingham Forest",
+      "Southampton",
+      "Tottenham Hotspur",
+      "West Ham United",
+      "Wolverhampton Wanderers"
+    ];
+    let players = [];
+    let assignments = [];
+
+    function addTeam() {
+      const input = document.getElementById('teamInput');
+      if (input.value.trim() !== '') {
+        teams.push(input.value.trim());
+        input.value = '';
+        renderTeams();
+      }
+    }
+
+    function addPlayer() {
+      const input = document.getElementById('playerInput');
+      if (input.value.trim() !== '') {
+        players.push(input.value.trim());
+        input.value = '';
+        renderPlayers();
+      }
+    }
+
+    function renderTeams() {
+      const list = document.getElementById('teamList');
+      list.innerHTML = '';
+      teams.forEach(team => {
+        const li = document.createElement('li');
+        li.textContent = team;
+        list.appendChild(li);
+      });
+    }
+
+    function renderPlayers() {
+      const list = document.getElementById('playerList');
+      list.innerHTML = '';
+      players.forEach(player => {
+        const li = document.createElement('li');
+        li.textContent = player;
+        list.appendChild(li);
+      });
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function assignTeams() {
+      assignments = [];
+      const shuffledTeams = shuffle([...teams]);
+
+      if (players.length > teams.length) {
+        alert('Not enough teams for all players');
+        return;
+      }
+
+      players.forEach((player, index) => {
+        assignments.push({ player, team: shuffledTeams[index] });
+      });
+
+      renderAssignments();
+    }
+
+    function renderAssignments() {
+      const list = document.getElementById('assignmentList');
+      list.innerHTML = '';
+      assignments.forEach(a => {
+        const li = document.createElement('li');
+        li.textContent = `${a.player} → ${a.team}`;
+        list.appendChild(li);
+      });
+    }
+
+    function pairMatches() {
+      const list = document.getElementById('matchList');
+      list.innerHTML = '';
+
+      const shuffledAssignments = shuffle([...assignments]);
+
+      for (let i = 0; i < shuffledAssignments.length; i += 2) {
+        if (shuffledAssignments[i + 1]) {
+          const li = document.createElement('li');
+          li.textContent = `${shuffledAssignments[i].team} vs ${shuffledAssignments[i + 1].team}`;
+          list.appendChild(li);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
